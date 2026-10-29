@@ -25,7 +25,11 @@ const TEST_APP_PORT = 3005;
 const ANVIL_RPC_URL = `http://127.0.0.1:${TEST_ANVIL_PORT}`;
 const APP_URL = `http://localhost:${TEST_APP_PORT}`;
 
-const CHROME_PATH = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome';
+const CUSTOM_EXECUTABLE_PATH =
+  process.env.CHROME_PATH ||
+  process.env.BROWSER_PATH ||
+  process.env.EXECUTABLE_PATH ||
+  null;
 
 const ADMIN_PK = '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80';
 const ISSUER_PK = '0x59c6995e998f97a5a0044966f0945389dc9e86dae88c7a8412f4603b6b78690d';
@@ -101,9 +105,11 @@ async function main() {
   console.log('CertProof Sprint 4 Stage 2: Real-Browser Public Verification E2E');
   console.log('===============================================================');
 
-  // Verify Chrome installation
-  if (!fs.existsSync(CHROME_PATH)) {
-    throw new Error(`Real Google Chrome executable not found at ${CHROME_PATH}`);
+  // Validate optional custom browser executable only if supplied
+  if (CUSTOM_EXECUTABLE_PATH) {
+    if (!fs.existsSync(CUSTOM_EXECUTABLE_PATH)) {
+      throw new Error(`Configured browser executable not found at ${CUSTOM_EXECUTABLE_PATH}`);
+    }
   }
 
   // Verify Fixtures
@@ -238,14 +244,15 @@ async function main() {
   }
   console.log('  ✓ Production application server is active.');
 
-  // 5. Launch real Google Chrome or Playwright Chromium
+  // 5. Launch Chromium (or configured custom browser)
   console.log('[5/8] Launching browser instance via Playwright...');
   const launchOptions = { headless: true };
-  if (fs.existsSync(CHROME_PATH)) {
-    launchOptions.executablePath = CHROME_PATH;
+  if (CUSTOM_EXECUTABLE_PATH) {
+    launchOptions.executablePath = CUSTOM_EXECUTABLE_PATH;
   }
   browser = await chromium.launch(launchOptions);
-  console.log(`  ✓ Browser ${browser.version()} launched successfully.`);
+  const browserName = browser.browserType().name();
+  console.log(`  ✓ Browser ${browserName} ${browser.version()} launched successfully.`);
 
   const context = await browser.newContext();
   const page = await context.newPage();
