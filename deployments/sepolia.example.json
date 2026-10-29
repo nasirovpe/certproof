@@ -1,0 +1,16 @@
+{
+  "network": "sepolia",
+  "chainId": 11155111,
+  "contractAddress": "0x0000000000000000000000000000000000000000",
+  "deployer": "0x0000000000000000000000000000000000000000",
+  "initialAdministrator": "0x0000000000000000000000000000000000000000",
+  "transactionHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "blockNumber": 0,
+  "blockHash": "0x0000000000000000000000000000000000000000000000000000000000000000",
+  "blockTimestamp": 0,
+  "runtimeCodeHash": "0xad46312090ea2121412ceb15dc15cbcfca828380304e86836e22c03b68c94b0f",
+  "compiler": "0.8.24",
+  "evmTarget": "cancun",
+  "status": "pending_authorized_deployment",
+  "notes": "Template manifest for Sepolia testnet deployment. No public deployment broadcast is authorized in Stage 2."
+}

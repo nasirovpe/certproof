@@ -1,0 +1,15 @@
+{
+  "network": "anvil-local",
+  "chainId": 31337,
+  "contractAddress": "0x5fbdb2315678afecb367f032d93f642f64180aa3",
+  "deployer": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "initialAdministrator": "0xf39Fd6e51aad88F6F4ce6aB8827279cffFb92266",
+  "transactionHash": "0x0ec5d21127c68c26cbc75d0888d083a84e2b41dd06419872256d139e92bbfb11",
+  "blockNumber": 1,
+  "blockHash": "0x92f729a46acd1d40256084f1f32f8685880916bb3503b42d0aca115c6a507e22",
+  "blockTimestamp": 1793182044,
+  "runtimeCodeHash": "0xad46312090ea2121412ceb15dc15cbcfca828380304e86836e22c03b68c94b0f",
+  "compiler": "0.8.24",
+  "evmTarget": "cancun",
+  "deployedAt": "2026-10-28T10:07:28.699Z"
+}

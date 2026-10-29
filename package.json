@@ -1,0 +1,40 @@
+{
+  "name": "certproof",
+  "version": "1.0.0",
+  "main": "index.js",
+  "directories": {
+    "doc": "docs"
+  },
+  "type": "module",
+  "scripts": {
+    "compile": "cd contracts && export PATH=\"$HOME/.foundry/bin:$PATH\" && forge build",
+    "test": "cd contracts && export PATH=\"$HOME/.foundry/bin:$PATH\" && forge test -vv",
+    "coverage": "cd contracts && export PATH=\"$HOME/.foundry/bin:$PATH\" && forge coverage --report summary",
+    "format": "cd contracts && export PATH=\"$HOME/.foundry/bin:$PATH\" && forge fmt",
+    "export-abi": "node scripts/export-abi.mjs",
+    "generate-fixtures": "node scripts/generate-fixtures.mjs",
+    "demo:local": "node scripts/deploy-and-demo-local.mjs",
+    "web:dev": "cd frontend && npm run dev",
+    "web:build": "cd frontend && npm run build",
+    "web:lint": "cd frontend && npm run lint",
+    "web:test": "cd frontend && npm test",
+    "web:test:browser": "node scripts/verify-browser-e2e.mjs",
+    "test:browser": "node scripts/verify-browser-e2e.mjs",
+    "test:all": "cd contracts && export PATH=\"$HOME/.foundry/bin:$PATH\" && forge test -vv && cd ../frontend && npm test",
+    "smoke:package": "node scripts/smoke-test-package.mjs",
+    "verify:manifest": "node scripts/verify-deployment-manifest.mjs",
+    "verify:anvil-persistence": "node scripts/verify-anvil-persistence.mjs",
+    "portfolio:screenshots": "node scripts/capture-portfolio-screenshots.mjs"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
+  },
+  "description": "",
+  "devDependencies": {
+    "viem": "^2.57.12"
+  }
+}

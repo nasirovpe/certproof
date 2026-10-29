@@ -1,0 +1,117 @@
+# ==============================================================================
+# CertProof Scoped Local Deployment Compose
+# ==============================================================================
+# Services:
+#   - web: Production-packaged Next.js container (non-root nextjs user)
+#   - mongodb: Private authenticated document store with named persistent volume
+#   - anvil: Optional local Foundry consensus node (Profile: local-anvil)
+# ==============================================================================
+
+services:
+  # ----------------------------------------------------------------------------
+  # 1. MongoDB Database Service
+  # ----------------------------------------------------------------------------
+  mongodb:
+    image: mongo:7.0
+    restart: unless-stopped
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_ROOT_USER:-certproof_admin}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_ROOT_PASSWORD:-certproof_local_pass}
+      MONGO_INITDB_DATABASE: ${MONGO_DATABASE:-certproof}
+    volumes:
+      - mongo_data:/data/db
+      - ./scripts/mongo-init-indexes.js:/docker-entrypoint-initdb.d/01-indexes.js:ro
+    networks:
+      - certproof_net
+    ports:
+      # Bind to loopback interface only for secure local engineering inspection
+      - "127.0.0.1:${MONGO_PORT:-27017}:27017"
+    healthcheck:
+      test: ["CMD-SHELL", "echo 'db.runCommand(\"ping\").ok' | mongosh localhost:27017/test --quiet"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------------------------
+  # 2. CertProof Web Application Service
+  # ----------------------------------------------------------------------------
+  web:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        NEXT_PUBLIC_APP_URL: ${NEXT_PUBLIC_APP_URL:-http://localhost:3010}
+        NEXT_PUBLIC_CHAIN_ID: ${NEXT_PUBLIC_CHAIN_ID:-31337}
+        NEXT_PUBLIC_REGISTRY_ADDRESS: ${NEXT_PUBLIC_REGISTRY_ADDRESS:-0x5fbdb2315678afecb367f032d93f642f64180aa3}
+        NEXT_PUBLIC_ANVIL_RPC_URL: ${NEXT_PUBLIC_ANVIL_RPC_URL:-http://127.0.0.1:8545}
+        NEXT_PUBLIC_SEPOLIA_RPC_URL: ${NEXT_PUBLIC_SEPOLIA_RPC_URL:-https://rpc.sepolia.org}
+    image: certproof:local
+    restart: unless-stopped
+    environment:
+      # Explicit deployment environment: defaults to 'local' for local development container runs.
+      # Non-local environments (staging, production) reject development credentials and session secrets.
+      APP_ENV: ${APP_ENV:-local}
+      NODE_ENV: production
+      PORT: 3000
+      HOSTNAME: "0.0.0.0"
+      # Local convenience defaults: restricted strictly to local-development mode with loopback exposure
+      MONGODB_URI: mongodb://${MONGO_ROOT_USER:-certproof_admin}:${MONGO_ROOT_PASSWORD:-certproof_local_pass}@mongodb:27017/${MONGO_DATABASE:-certproof}?authSource=admin
+      SESSION_SECRET: ${SESSION_SECRET:-certproof_local_production_session_secret_32bytes_long}
+      TRUST_PROXY: ${TRUST_PROXY:-false}
+      SERVER_RPC_URL: ${SERVER_RPC_URL:-http://anvil:8545}
+      COOKIE_SECURE: ${COOKIE_SECURE:-false}
+    depends_on:
+      mongodb:
+        condition: service_healthy
+    networks:
+      - certproof_net
+    ports:
+      # Loopback binding (default port 3010 to prevent host port 3000 conflicts)
+      - "127.0.0.1:${APP_PORT:-3010}:3000"
+    healthcheck:
+      test: ["CMD", "wget", "--no-verbose", "--tries=1", "--spider", "http://127.0.0.1:3000/api/auth/session"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 10s
+
+  # ----------------------------------------------------------------------------
+  # 3. Optional Local Anvil Profile (Run with --profile local-anvil)
+  # ----------------------------------------------------------------------------
+  anvil:
+    profiles:
+      - local-anvil
+      - anvil
+    image: ghcr.io/foundry-rs/foundry:latest
+    restart: unless-stopped
+    user: "0:0"
+    stop_signal: SIGINT
+    entrypoint: ["anvil"]
+    command: ["--host", "0.0.0.0", "--port", "8545", "--state", "/anvil_data/state.json", "--state-interval", "2"]
+    volumes:
+      - anvil_data:/anvil_data
+    networks:
+      - certproof_net
+    ports:
+      - "127.0.0.1:${ANVIL_PORT:-8545}:8545"
+    healthcheck:
+      test: ["CMD", "cast", "block-number", "--rpc-url", "http://127.0.0.1:8545"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+
+# ------------------------------------------------------------------------------
+# Named Persistent Storage Volumes
+# ------------------------------------------------------------------------------
+volumes:
+  mongo_data:
+  anvil_data:
+
+# ------------------------------------------------------------------------------
+# Scoped Private Network
+# ------------------------------------------------------------------------------
+networks:
+  certproof_net:
+    driver: bridge

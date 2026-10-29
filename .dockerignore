@@ -1,0 +1,33 @@
+# Git and repository metadata
+.git
+.gitignore
+.github
+
+# Environment files and credentials (CRITICAL: never bake secrets into build context)
+.env
+.env*
+.env.local
+.env*.local
+**/.env
+**/.env*
+**/.env.local
+**/.env*.local
+*.pem
+*.key
+deployments/private*
+
+# Dependencies and build caches
+node_modules
+frontend/node_modules
+frontend/.next
+frontend/coverage
+frontend/test-results
+
+# Repository artifacts not needed in web container
+contracts
+scripts
+docs
+fixtures
+deploy
+tmp
+.gemini

@@ -1,0 +1,60 @@
+# ==============================================================================
+# CertProof Root .gitignore
+# ==============================================================================
+
+# Node dependencies
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.backup
+
+# Next.js build output, standalone chunks & cache
+.next/
+out/
+build/
+dist/
+*.tsbuildinfo
+
+# Local environment variables & secrets (CRITICAL: never commit credentials)
+.env
+.env*.local
+*.local
+.env.development
+.env.production
+.env.staging
+!*.example
+
+# Foundry compiler artifacts & broadcast logs
+contracts/out/
+contracts/cache/
+contracts/broadcast/
+broadcast/
+
+# Persistent local Docker storage volumes
+mongo_data/
+anvil_data/
+state.json
+*.state.json
+
+# Test outputs, coverage & Playwright artifacts
+coverage/
+*.lcov
+test-results/
+playwright-report/
+blob-report/
+
+# OS-generated metadata
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+
+# IDE and Editor configurations
+.vscode/
+.idea/
+*.sublime-project
+*.sublime-workspace

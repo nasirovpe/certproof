@@ -1,0 +1,168 @@
+name: CertProof CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+# Enforce minimal permissions by default
+permissions:
+  contents: read
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # ----------------------------------------------------------------------------
+  # 1. Smart Contracts Job
+  # ----------------------------------------------------------------------------
+  contracts:
+    name: Foundry Contracts Check
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Install Foundry
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Check code formatting
+        run: |
+          cd contracts
+          forge fmt --check
+
+      - name: Compile contracts
+        run: |
+          cd contracts
+          forge build --sizes
+
+      - name: Run smart contract unit, fuzz & invariant tests
+        run: |
+          cd contracts
+          forge test -vvv
+
+  # ----------------------------------------------------------------------------
+  # 2. Frontend, Parity, Lint & Build Job
+  # ----------------------------------------------------------------------------
+  frontend:
+    name: Frontend Quality & Build
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install Foundry toolchain (for contract artifacts & ABI export)
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install root dependencies
+        run: npm ci
+
+      - name: Install frontend dependencies
+        run: |
+          cd frontend
+          npm ci
+
+      - name: Compile contracts and export ABI
+        run: |
+          npm run compile
+          npm run export-abi
+
+      - name: Verify ABI Parity
+        run: |
+          git diff --exit-code contracts/abi frontend/src/lib/abi
+
+      - name: Validate Deployment Manifest Schemas
+        run: |
+          npm run verify:manifest deployments/local-anvil.json
+          npm run verify:manifest deployments/sepolia.example.json
+
+      - name: Run ESLint
+        run: npm run web:lint
+
+      - name: Run TypeScript typecheck
+        run: |
+          cd frontend
+          npx tsc --noEmit
+
+      - name: Run Frontend unit & integration tests
+        run: npm run web:test
+
+      - name: Build Next.js production bundle
+        env:
+          NEXT_PUBLIC_APP_URL: http://localhost:3000
+          NEXT_PUBLIC_CHAIN_ID: 31337
+          NEXT_PUBLIC_REGISTRY_ADDRESS: 0x5fbdb2315678afecb367f032d93f642f64180aa3
+          NEXT_PUBLIC_ANVIL_RPC_URL: http://127.0.0.1:8545
+          NEXT_PUBLIC_SEPOLIA_RPC_URL: https://rpc.sepolia.org
+          NODE_ENV: production
+        run: npm run web:build
+
+  # ----------------------------------------------------------------------------
+  # 3. Real Browser E2E Verification Job
+  # ----------------------------------------------------------------------------
+  browser-e2e:
+    name: Browser E2E & Web Worker Verification
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout repository with submodules
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+          persist-credentials: false
+
+      - name: Setup Node.js 22 LTS
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: 'npm'
+          cache-dependency-path: |
+            package-lock.json
+            frontend/package-lock.json
+
+      - name: Install Foundry (Anvil consensus node)
+        uses: foundry-rs/foundry-toolchain@v1
+        with:
+          version: nightly
+
+      - name: Install dependencies
+        run: |
+          npm ci
+          cd frontend && npm ci
+
+      - name: Install Playwright Chromium dependencies
+        run: |
+          cd frontend
+          npx playwright install --with-deps chromium
+
+      - name: Compile contracts and export ABI
+        run: |
+          npm run compile
+          npm run export-abi
+
+      - name: Run Browser E2E Tests (with Web Worker zero-upload verification)
+        run: npm run test:browser

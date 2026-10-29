@@ -1,0 +1,131 @@
+=== FORGE VERSION ===
+forge Version: 1.8.6
+Commit SHA: 6bad0a66de7c83f7b33695044138f0f5fa4c5990
+Build Timestamp: 2026-10-21T17:44:12.747118000Z (1792604652)
+Build Profile: dist
+
+=== FORGE TEST LIST ===
+No files changed, compilation skipped
+test/CertProofRegistry.t.sol
+  CertProofRegistryUnitTest
+    test_AdminCanAuthorizeAndDeauthorizeIssuer
+    test_AdminCannotRevokeIssuerCertificate
+    test_AuthorizedIssuerCanRegisterCertificate
+    test_ChangedDocumentHashAllowsNewRegistration
+    test_ConstructorRevertsOnZeroAddress
+    test_DeauthorizedIssuerCannotRegister
+    test_DifferentIssuersCanRegisterSameDocumentHash
+    test_DuplicateCertIdCollisionRevertsGlobally
+    test_DuplicateIssuerDocumentHashPermanentlyBlockedAfterRevocation
+    test_DuplicateIssuerDocumentHashReverts
+    test_FixturesRawBytesKeccakMatchViemExpected
+    test_IndependentRevokedAndDeauthorizedStates
+    test_InitialAdminIsNotAuthorizedIssuerByDefault
+    test_NonAdminCannotAuthorizeIssuer
+    test_NonIssuerCannotRevoke
+    test_OriginalIssuerCanRevoke
+    test_OriginalIssuerCanRevokeAfterDeauthorization
+    test_PaginationEmptyArrayWhenNoCerts
+    test_PaginationExcessiveLimitReverts
+    test_PaginationOffsetBeyondEnd
+    test_PaginationOrderingAndSlices
+    test_PaginationZeroLimitReverts
+    test_ReauthorizeIssuer
+    test_RenounceOwnershipIsDisabled
+    test_RepeatedRevocationReverts
+    test_RevokeNonexistentCertificateReverts
+    test_RevokedCertificatesRetainedInPagination
+    test_SetIssuerAuthorizationZeroAddressReverts
+    test_TwoStepOwnershipTransfer
+    test_UnauthorizedIssuerCannotRegister
+    test_UnknownCertificateReads
+    test_ZeroCertIdReverts
+    test_ZeroDocumentHashReverts
+
+test/CertProofRegistryFuzz.t.sol
+  CertProofRegistryFuzzTest
+    testFuzz_PaginationBoundsNeverRevertOrOverflow
+    testFuzz_RegistrationStoresExactValues
+    testFuzz_UnauthorizedCallerCannotAuthorize
+    testFuzz_UnauthorizedCallerCannotRevoke
+
+test/CertProofRegistryInvariant.t.sol
+  CertProofRegistryInvariantTest
+    invariant_AccessControlBoundaries
+    invariant_BoundedPagination
+    invariant_ImmutableRegisteredData
+    invariant_IssuerListConsistency
+    invariant_PermanentRevocation
+    invariant_UniqueIdsAndPerIssuerHashes
+
+
+=== FORGE TEST RUN ===
+No files changed, compilation skipped
+
+Ran 33 tests for test/CertProofRegistry.t.sol:CertProofRegistryUnitTest
+[PASS] test_AdminCanAuthorizeAndDeauthorizeIssuer() (gas: 118292)
+[PASS] test_AdminCannotRevokeIssuerCertificate() (gas: 249439)
+[PASS] test_AuthorizedIssuerCanRegisterCertificate() (gas: 247608)
+[PASS] test_ChangedDocumentHashAllowsNewRegistration() (gas: 373532)
+[PASS] test_ConstructorRevertsOnZeroAddress() (gas: 4360)
+[PASS] test_DeauthorizedIssuerCannotRegister() (gas: 112981)
+[PASS] test_DifferentIssuersCanRegisterSameDocumentHash() (gas: 468152)
+[PASS] test_DuplicateCertIdCollisionRevertsGlobally() (gas: 330980)
+[PASS] test_DuplicateIssuerDocumentHashPermanentlyBlockedAfterRevocation() (gas: 303704)
+[PASS] test_DuplicateIssuerDocumentHashReverts() (gas: 254398)
+[PASS] test_FixturesRawBytesKeccakMatchViemExpected() (gas: 241201)
+[PASS] test_IndependentRevokedAndDeauthorizedStates() (gas: 398622)
+[PASS] test_InitialAdminIsNotAuthorizedIssuerByDefault() (gas: 17810)
+[PASS] test_NonAdminCannotAuthorizeIssuer() (gas: 37390)
+[PASS] test_NonIssuerCannotRevoke() (gas: 327760)
+[PASS] test_OriginalIssuerCanRevoke() (gas: 288630)
+[PASS] test_OriginalIssuerCanRevokeAfterDeauthorization() (gas: 323228)
+[PASS] test_PaginationEmptyArrayWhenNoCerts() (gas: 11054)
+[PASS] test_PaginationExcessiveLimitReverts() (gas: 13552)
+[PASS] test_PaginationOffsetBeyondEnd() (gas: 374544)
+[PASS] test_PaginationOrderingAndSlices() (gas: 848241)
+[PASS] test_PaginationZeroLimitReverts() (gas: 13518)
+[PASS] test_ReauthorizeIssuer() (gas: 138392)
+[PASS] test_RenounceOwnershipIsDisabled() (gas: 13155)
+[PASS] test_RepeatedRevocationReverts() (gas: 300970)
+[PASS] test_RevokeNonexistentCertificateReverts() (gas: 34736)
+[PASS] test_RevokedCertificatesRetainedInPagination() (gas: 444187)
+[PASS] test_SetIssuerAuthorizationZeroAddressReverts() (gas: 34667)
+[PASS] test_TwoStepOwnershipTransfer() (gas: 151463)
+[PASS] test_UnauthorizedIssuerCannotRegister() (gas: 35318)
+[PASS] test_UnknownCertificateReads() (gas: 23338)
+[PASS] test_ZeroCertIdReverts() (gas: 85688)
+[PASS] test_ZeroDocumentHashReverts() (gas: 85704)
+Suite result: ok. 33 passed; 0 failed; 0 skipped; finished in 29.75ms (23.51ms CPU time)
+
+Ran 4 tests for test/CertProofRegistryFuzz.t.sol:CertProofRegistryFuzzTest
+[PASS] testFuzz_PaginationBoundsNeverRevertOrOverflow(uint8,uint256,uint256) (runs: 256, μ: 1751491, ~: 1064508)
+[PASS] testFuzz_RegistrationStoresExactValues(bytes32,bytes32,uint32) (runs: 256, μ: 187501, ~: 187692)
+[PASS] testFuzz_UnauthorizedCallerCannotAuthorize(address,address,bool) (runs: 256, μ: 35897, ~: 35985)
+[PASS] testFuzz_UnauthorizedCallerCannotRevoke(address,bytes32,bytes32) (runs: 256, μ: 199589, ~: 199903)
+Suite result: ok. 4 passed; 0 failed; 0 skipped; finished in 30.31ms (51.57ms CPU time)
+
+Ran 1 test for test/CertProofRegistryInvariant.t.sol:CertProofRegistryInvariantTest
+[PASS]
+CertProofRegistryInvariantTest invariants:
+[PASS] invariant_AccessControlBoundaries
+[PASS] invariant_BoundedPagination
+[PASS] invariant_ImmutableRegisteredData
+[PASS] invariant_IssuerListConsistency
+[PASS] invariant_PermanentRevocation
+[PASS] invariant_UniqueIdsAndPerIssuerHashes
+ CertProofRegistryInvariantTest invariants (runs: 64, calls: 2048, reverts: 0)
+
+╭------------------+------------------------+-------+---------+----------╮
+| Contract         | Selector               | Calls | Reverts | Discards |
++========================================================================+
+| CertProofHandler | registerCertificate    | 676   | 0       | 0        |
+|------------------+------------------------+-------+---------+----------|
+| CertProofHandler | revokeCertificate      | 697   | 0       | 0        |
+|------------------+------------------------+-------+---------+----------|
+| CertProofHandler | setIssuerAuthorization | 675   | 0       | 0        |
+╰------------------+------------------------+-------+---------+----------╯
+
+Suite result: ok. 1 passed; 0 failed; 0 skipped; finished in 504.58ms (494.17ms CPU time)
+
+Ran 3 test suites in 513.93ms (564.65ms CPU time): 38 tests passed, 0 failed, 0 skipped (38 total tests)

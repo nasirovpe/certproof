@@ -1,0 +1,26 @@
+{
+  "specification": "Raw-byte Keccak-256 (Ethereum EVM Standard 0x20 opcode)",
+  "generatedAt": "2026-10-28T10:07:22.125Z",
+  "files": {
+    "original": {
+      "path": "fixtures/original.pdf",
+      "sizeBytes": 482,
+      "keccak256": "0xf98502a9365a9b66aab2d6e1cb5395027ac6820df744fc8013c3065341ad7daf"
+    },
+    "duplicate": {
+      "path": "fixtures/duplicate.pdf",
+      "sizeBytes": 482,
+      "keccak256": "0xf98502a9365a9b66aab2d6e1cb5395027ac6820df744fc8013c3065341ad7daf"
+    },
+    "modified": {
+      "path": "fixtures/modified.pdf",
+      "sizeBytes": 482,
+      "keccak256": "0xb738b380d12bfc3dd1c3afd068af6ef821b33aec782a6ee028bd17bc1fff7be7",
+      "byteDifference": {
+        "offset": 274,
+        "originalByteHex": "0x28",
+        "modifiedByteHex": "0x5b"
+      }
+    }
+  }
+}
