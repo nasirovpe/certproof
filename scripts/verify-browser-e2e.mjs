@@ -254,7 +254,9 @@ async function main() {
   const browserName = browser.browserType().name();
   console.log(`  ✓ Browser ${browserName} ${browser.version()} launched successfully.`);
 
-  const context = await browser.newContext();
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 1024 },
+  });
   const page = await context.newPage();
 
   // Monitor console errors and warnings
